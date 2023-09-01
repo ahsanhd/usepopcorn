@@ -56,12 +56,45 @@ const average = (arr) =>
 export default function App() {
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState([]);
-
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const query = "adadasda";
   useEffect(function () {
-    fetch(`https://www.omdbapi.com/?apikey=${KEY}&s=American Beauty`)
-      .then((res) => res.json())
-      .then((data) => setMovies(data.Search));
+    async function fetchMovies() {
+      try {
+        setIsLoading(true);
+        const res = await fetch(
+          `https://www.omdbapi.com/?apikey=${KEY}&s=${query}`
+        );
+
+        if (!res.ok)
+          throw new Error(
+            "There was some error boi in fetching your shitty movie"
+          );
+
+        const data = await res.json();
+        // console.log(data);
+        if (data.Response === "False") {
+          throw new Error("laka poi poi");
+        }
+
+        setMovies(data.Search);
+      } catch (err) {
+        console.error(err.message);
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchMovies();
   }, []);
+
+  // useEffect(function () {
+  //   fetch(`https://www.omdbapi.com/?apikey=${KEY}&s=American Beauty`)
+  //     .then((res) => res.json())
+  //     .then((data) => setMovies(data.Search));
+  // }, []);
 
   return (
     <>
@@ -72,7 +105,9 @@ export default function App() {
 
       <Main>
         <Box>
-          <MoviesList movies={movies} />
+          {isLoading && <Loader />}
+          {!isLoading && !error && <MoviesList movies={movies} />}
+          {error && <Error message={error} />}
         </Box>
         <Box>
           <WatchedSummary watched={watched} />
@@ -89,6 +124,17 @@ function NavBar({ children }) {
       <Logo /> {children}
     </nav>
   );
+}
+function Error({ message }) {
+  return (
+    <div className="error">
+      {" "}
+      <span>🚫</span> {message}
+    </div>
+  );
+}
+function Loader() {
+  return <p className="loader">Sabar Kr War...</p>;
 }
 
 function Logo() {
