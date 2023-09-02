@@ -73,14 +73,14 @@ export default function App() {
           );
 
         const data = await res.json();
-        // console.log(data);
-        if (data.Response === "False") {
-          throw new Error("laka poi poi");
-        }
+        console.log("Response", data.Response);
+        if (data.Response === "False")
+          throw new Error("Sorry Apki Tati Movie Nahi Milee Movie Not Found");
+        console.log("Error here");
 
         setMovies(data.Search);
       } catch (err) {
-        console.error(err.message);
+        console.error(err);
         setError(err.message);
       } finally {
         setIsLoading(false);
@@ -107,7 +107,7 @@ export default function App() {
         <Box>
           {isLoading && <Loader />}
           {!isLoading && !error && <MoviesList movies={movies} />}
-          {error && <Error message={error} />}
+          {error && <ErrorMessage message={error} />}
         </Box>
         <Box>
           <WatchedSummary watched={watched} />
@@ -125,12 +125,11 @@ function NavBar({ children }) {
     </nav>
   );
 }
-function Error({ message }) {
+function ErrorMessage({ message }) {
   return (
-    <div className="error">
-      {" "}
+    <p className="error">
       <span>🚫</span> {message}
-    </div>
+    </p>
   );
 }
 function Loader() {
