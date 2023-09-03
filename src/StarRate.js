@@ -16,7 +16,7 @@ export default function StarRate({
   size = 48,
   message = [],
   className = "",
-  // onSetRating,
+  onSetRating,
   defaultRating = 0,
 }) {
   const textStyle = {
@@ -35,7 +35,7 @@ export default function StarRate({
               key={i}
               onRate={() => {
                 setRate(i + 1);
-                // onSetRating(i + 1);
+                onSetRating(i + 1);
               }}
               full={tempRate ? tempRate >= i + 1 : rate >= i + 1}
               onHoverIn={() => setTempRate(i + 1)}
@@ -49,7 +49,7 @@ export default function StarRate({
         })}
       </div>
       <p style={textStyle}>
-        {message
+        {message.length === maxRating
           ? message[tempRate ? tempRate - 1 : rate - 1]
           : tempRate || rate || ""}
       </p>
