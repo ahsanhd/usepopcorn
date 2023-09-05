@@ -120,7 +120,7 @@ export default function App() {
         setError("");
         return;
       }
-
+      handleBack();
       fetchMovies();
       return function () {
         controller.abort();
