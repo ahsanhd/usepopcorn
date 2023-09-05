@@ -86,12 +86,14 @@ export default function App() {
   }
   useEffect(
     function () {
+      const controller = new AbortController();
       async function fetchMovies() {
         try {
           setIsLoading(true);
           setError("");
           const res = await fetch(
-            `https://www.omdbapi.com/?apikey=${KEY}&s=${query}`
+            `https://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
+            { signal: controller.signal }
           );
 
           if (!res.ok)
@@ -105,9 +107,10 @@ export default function App() {
             throw new Error("Sorry Apki Tati Movie Nahi Milee Movie Not Found");
 
           setMovies(data.Search);
+          setError("");
         } catch (err) {
           console.error(err);
-          setError(err.message);
+          if (err.name !== "AbortError") setError(err.message);
         } finally {
           setIsLoading(false);
         }
@@ -119,6 +122,9 @@ export default function App() {
       }
 
       fetchMovies();
+      return function () {
+        controller.abort();
+      };
     },
     [query]
   );
@@ -336,6 +342,30 @@ function MovieDetails({
       fetchMovieDetails();
     },
     [selectedID]
+  );
+
+  useEffect(
+    function () {
+      if (!title) return;
+      document.title = `Movie | ${title}`;
+      return function () {
+        document.title = "usePopCorn";
+      };
+    },
+    [title]
+  );
+
+  useEffect(
+    function () {
+      const callback = (e) => {
+        if (e.code === "Escape") onBack();
+      };
+      document.addEventListener("keydown", callback);
+      return function () {
+        document.removeEventListener("keydown", callback);
+      };
+    },
+    [onBack]
   );
   return (
     <div className="details">
