@@ -8,7 +8,7 @@ const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
 export default function App() {
-  const [query, setQuery] = useState("office");
+  const [query, setQuery] = useState("");
   const [movies, setMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedID, setSelectedID] = useState(null);
@@ -154,6 +154,11 @@ function Logo() {
 }
 
 function Search({ query, setQuery }) {
+  useEffect(() => {
+    const inElement = document.querySelector(".search");
+    inElement.focus();
+  }, []);
+
   return (
     <input
       className="search"
