@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import StarRate from "./StarRate";
 
 //  KEY ==  9d776b80
@@ -154,10 +154,27 @@ function Logo() {
 }
 
 function Search({ query, setQuery }) {
+  const inputEle = useRef(null);
+
   useEffect(() => {
-    const inElement = document.querySelector(".search");
-    inElement.focus();
-  }, []);
+    const callback = (e) => {
+      if (document.activeElement === inputEle.current) return;
+
+      if (e.code === "Enter") {
+        inputEle.current.focus();
+        setQuery("");
+      }
+    };
+    document.addEventListener("keydown", callback);
+
+    return () => {
+      document.addEventListener("keydown", callback);
+    };
+  }, [setQuery]);
+  // useEffect(() => {
+  //   const inElement = document.querySelector(".search");
+  //   inElement.focus();
+  // }, []);
 
   return (
     <input
@@ -166,6 +183,7 @@ function Search({ query, setQuery }) {
       placeholder="Search movies..."
       value={query}
       onChange={(e) => setQuery(e.target.value)}
+      ref={inputEle}
     />
   );
 }
