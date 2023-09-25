@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import StarRate from "./StarRate";
-import { useKey } from "./useKey";
+
 //  KEY ==  9d776b80
 const KEY = "9d776b80";
 
@@ -314,20 +314,18 @@ function MovieDetails({
     [title]
   );
 
-  useKey("Escape", onBack);
-
-  // useEffect(
-  //   function () {
-  //     const callback = (e) => {
-  //       if (e.code === "Escape") onBack();
-  //     };
-  //     document.addEventListener("keydown", callback);
-  //     return function () {
-  //       document.removeEventListener("keydown", callback);
-  //     };
-  //   },
-  //   [onBack]
-  // );
+  useEffect(
+    function () {
+      const callback = (e) => {
+        if (e.code === "Escape") onBack();
+      };
+      document.addEventListener("keydown", callback);
+      return function () {
+        document.removeEventListener("keydown", callback);
+      };
+    },
+    [onBack]
+  );
   return (
     <div className="details">
       {isLoading ? (
